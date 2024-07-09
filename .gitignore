@@ -1,0 +1,14 @@
+venv
+.idea
+.DS_Store
+.pytest_cache
+.venv
+__pycache__
+.vscode
+st7
+db_creds.py
+.env
+allure-results
+allure-report
+allure-rereport
+test_api_dmitrii
