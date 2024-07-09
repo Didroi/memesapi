@@ -11,5 +11,9 @@ class BaseApi:
         return self.response.status_code == code
 
     @allure.step('Check response Name')
-    def check_response_name_is_(self, name):
-        return self.response_json['name'] == name
+    def check_response_user_is_(self, user):
+        return self.response_json['user'] == user
+
+    @allure.step('Check whithout Token')
+    def try_without_token(self, name):
+        pass
