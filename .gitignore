@@ -11,4 +11,4 @@ db_creds.py
 allure-results
 allure-report
 allure-rereport
-test_api_dmitrii
+not_test_api_dmitrii
