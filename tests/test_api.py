@@ -81,3 +81,13 @@ def test_wrong_authorization_url(created_token, method):
 def test_wrong_authorization_curl(created_token):
     created_token.wrong_url(auth_payload)
     assert created_token.check_status_is_(404)
+
+
+@allure.description('Check token status')
+@allure.feature('Check token')
+@allure.story('Check token')
+@allure.title('GET /authorize/token')
+@pytest.mark.regression
+@pytest.mark.smoke
+def test_check_token(user_token, checked_token):
+    checked_token.check_token_status(user_token)
