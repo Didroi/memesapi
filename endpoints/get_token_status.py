@@ -5,20 +5,21 @@ from tests.data import url
 from endpoints.base_api import BaseApi
 
 
-class CreateToken(BaseApi):
-    @allure.step('Create Token')
-    def create_token(self, payload, header=None):
+class CheckTokenStatus(BaseApi):
+    @allure.step('Check Token status')
+    def check_token_status(self, user_token, header=None):
         headers = header if header else h.non_auth_header
 
-        self.response = requests.post(
-            f'{url.url}/authorize',
-            json=payload,
+        self.response = requests.get(
+            f'{url.url}/authorize/{user_token}',
             headers=headers
         )
 
-        self.response_json = self.response.json()
-        self.token = self.response_json['token']
-        # print(self.response_json)
+        self.response_txt = self.response.text
+
+
+
+
 
     @allure.step('Create Token')
     def false_create_token(self, payload, header=None):

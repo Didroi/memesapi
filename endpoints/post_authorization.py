@@ -18,7 +18,6 @@ class CreateToken(BaseApi):
 
         self.response_json = self.response.json()
         self.token = self.response_json['token']
-        # print(self.response_json)
 
     @allure.step('Create Token')
     def false_create_token(self, payload, header=None):
