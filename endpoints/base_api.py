@@ -15,3 +15,4 @@ class BaseApi:
     @allure.step('Check whithout Token')
     def try_without_token(self, name):
         pass
+

@@ -20,7 +20,6 @@ class CheckTokenStatus(BaseApi):
 
 
 
-
     @allure.step('Create Token')
     def false_create_token(self, payload, header=None):
         headers = header if header else h.non_auth_header
