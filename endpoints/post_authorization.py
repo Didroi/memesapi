@@ -16,10 +16,11 @@ class CreateToken(BaseApi):
             headers=headers
         )
 
+        print(self.response)
         self.response_json = self.response.json()
         self.token = self.response_json['token']
-        # with open('tests/data/token.py', 'w') as f:
-        #     f.write(f'token = "{self.token}"')
+        with open('tests/data/token.py', 'w') as f:
+            f.write(f'token = "{self.token}"')
 
     @allure.step('Create Token')
     def false_create_token(self, payload, header=None):

@@ -9,5 +9,5 @@ st7
 db_creds.py
 .env
 allure-results
-allure-report
+allure-repor
 allure-rereport

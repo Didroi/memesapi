@@ -4,7 +4,7 @@ from tests.data import payloads as p
 
 
 user = p.token_payload['name']
-auth_payload = p.token_payload
+auth_payload = p.token_payload.copy()
 
 
 @allure.description('Creating new token for user')
@@ -84,7 +84,7 @@ def test_wrong_authorization_curl(created_token):
 
 
 @allure.description('Check token status')
-@allure.feature('Check token')
+@allure.feature('Authorization')
 @allure.story('Check token')
 @allure.title('GET /authorize/token')
 @pytest.mark.regression

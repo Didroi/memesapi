@@ -16,14 +16,12 @@ def user_token():
         headers=headers
     )
 
-    if response.status_code == 200 and 'Token is alive' in response.text:
-        print('token is ok')
-    else:
-        token = CreateToken()
-        token.create_token(p.token_payload)
-        print ('create new token')
-    with open('data/token.py', 'w') as f:
-        f.write(f'token = "{token}"')
+    if response.status_code != 200 or 'Token is alive' not in response.text:
+        token_creation = CreateToken()
+        token_creation.create_token(p.token_payload)
+        token = token_creation.response.json()['token']
+        with open('data/token.py', 'w') as f:
+            f.write(f'token = "{token}"')
     return token
 
 @pytest.fixture()
