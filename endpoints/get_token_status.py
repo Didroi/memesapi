@@ -19,40 +19,9 @@ class CheckTokenStatus(BaseApi):
 
 
 
-
-    @allure.step('Create Token')
-    def false_create_token(self, payload, header=None):
-        headers = header if header else h.non_auth_header
-
-        self.response = requests.post(
-            f'{url.url}/authorize',
-            json=payload,
-            headers=headers
-        )
-
-    @allure.step('Wrong method')
-    def wrong_method(self, payload, method, header=None):
-        headers = header if header else h.non_auth_header
-
-        self.response = requests.request(str(method),
-                                         f'{url.url}/authorize',
-                                         json=payload,
-                                         headers=headers
-                                         )
-
-    @allure.step('Wrong URL')
-    def wrong_url(self, payload, header=None):
-        headers = header if header else h.non_auth_header
-
-        self.response = requests.post(
-            f'{url.url}/404authorize',
-            json=payload,
-            headers=headers
-        )
-
-    @allure.step('Check response Name')
-    def check_response_user_is_(self, user):
-        return self.response_json['user'] == user
+    @allure.step('Check correct answer')
+    def check_correct_text_in_request(self):
+        return 'Token is alive.' in self.response_txt
 
     @allure.step('Check token in response')
     def check_response_has_token(self):

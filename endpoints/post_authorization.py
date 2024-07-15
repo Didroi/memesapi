@@ -18,8 +18,11 @@ class CreateToken(BaseApi):
 
         self.response_json = self.response.json()
         self.token = self.response_json['token']
-        # with open('tests/data/token.py', 'w') as f:
-        #     f.write(f'token = "{self.token}"')
+
+    @allure.step('Update Token in file')
+    def update_token_in_file(self, header=None):
+        with open('../memesapi/tests/data/token.py', 'w') as f:
+            f.write(f'token = "{self.token}"')
 
     @allure.step('Create Token')
     def false_create_token(self, payload, header=None):

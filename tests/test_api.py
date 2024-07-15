@@ -91,3 +91,5 @@ def test_wrong_authorization_curl(created_token):
 @pytest.mark.smoke
 def test_check_token(user_token, checked_token):
     checked_token.check_token_status(user_token)
+    assert checked_token.check_status_is_(200)
+    assert checked_token.check_correct_text_in_request()

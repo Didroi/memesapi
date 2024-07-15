@@ -8,22 +8,15 @@ from tests.data import headers as h
 from tests.data import url
 
 @pytest.fixture()
-def user_token():
+def user_token(checked_token, created_token):
     token = t.token
-    headers = h.non_auth_header
-    response = requests.get(
-        f'{url.url}/authorize/{token}',
-        headers=headers
-    )
+    checked_token.check_token_status(token)
 
-    if response.status_code == 200 and 'Token is alive' in response.text:
-        print('token is ok')
-    else:
-        token = CreateToken()
-        token.create_token(p.token_payload)
-        print ('create new token')
-    with open('data/token.py', 'w') as f:
-        f.write(f'token = "{token}"')
+    if checked_token.response.status_code != 200 or 'Token is alive' not in checked_token.response.text:
+        created_token.create_token(p.token_payload)
+        created_token.update_token_in_file()
+        token = created_token.token
+
     return token
 
 @pytest.fixture()
