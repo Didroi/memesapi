@@ -1,1 +1,1 @@
-token = "bVCkIkvFCWBfk"
+token = "bVCkIkvFCWBf"

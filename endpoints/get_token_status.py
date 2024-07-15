@@ -57,3 +57,4 @@ class CheckTokenStatus(BaseApi):
     @allure.step('Check token in response')
     def check_response_has_token(self):
         return 'token' in self.response_json
+

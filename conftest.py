@@ -33,3 +33,4 @@ def created_token():
 @pytest.fixture()
 def checked_token():
     return CheckTokenStatus()
+
