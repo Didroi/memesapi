@@ -3,7 +3,7 @@ import allure
 from tests.data import headers as h
 from tests.data import url
 from endpoints.base_api import BaseApi
-
+from tests.data import token as t
 
 class CheckTokenStatus(BaseApi):
     @allure.step('Check Token status')
@@ -56,4 +56,12 @@ class CheckTokenStatus(BaseApi):
 
     @allure.step('Check token in response')
     def check_response_has_token(self):
-        return 'token' in self.response_json
+        print()
+        print(self.response_json)
+        print(t.token)
+        print(t.token in self.response_json)
+        return t.token in self.response_json
+
+    @allure.step('Check correct text in response')
+    def check_response_has_correct_text(self):
+        return 'Token is alive. Username is' in self.response_json
