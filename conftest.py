@@ -1,15 +1,13 @@
 import pytest
-import requests
 from tests.data import payloads as p
 from endpoints.post_authorization import CreateToken
 from endpoints.get_token_status import CheckTokenStatus
 from tests.data import token as t
-from tests.data import headers as h
-from tests.data import url
+
 
 @pytest.fixture()
 def user_token(checked_token, created_token):
-    token = t.token
+    token = t.tokens['active token']
     checked_token.check_token_status(token)
 
     if checked_token.response.status_code != 200 or 'Token is alive' not in checked_token.response.text:

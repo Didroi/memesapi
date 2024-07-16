@@ -9,7 +9,7 @@ auth_payload = p.token_payload
 
 @allure.description('Creating new token for user')
 @allure.feature('Authorization')
-@allure.story('Create token')
+@allure.story('1. Create token')
 @allure.title('POST /authorize')
 @pytest.mark.regression
 @pytest.mark.smoke
@@ -22,7 +22,7 @@ def test_create_token(created_token):
 
 @allure.description('Performance test emulation with only 2 tries')  # In real Test we can use bigger count
 @allure.feature('Authorization')
-@allure.story('Many tries')
+@allure.story('2. Many tries')
 @allure.title('POST /authorize')
 @pytest.mark.regression
 def test_multi_create_token(created_token):
@@ -35,7 +35,7 @@ def test_multi_create_token(created_token):
 
 @allure.description('Check incorrect strings in name')
 @allure.feature('Authorization')
-@allure.story('Incorrect user names')
+@allure.story('3. Incorrect user names')
 @allure.title('POST /authorize')
 @pytest.mark.parametrize('name', [
     '', ' ', '-', "Dima' -", "< ", '/Dima', ' Dima', '$ Pytest',
@@ -52,7 +52,7 @@ def test_create_token_with_incorrect_name(created_token, name):
 
 @allure.description('Check token creation with incorrect type od data')
 @allure.feature('Authorization')
-@allure.story('Incorrect create token')
+@allure.story('4. Incorrect create token')
 @allure.title('Negative POST /authorize')
 @pytest.mark.parametrize('name', [10, False, ('Dima', ), {}])
 @pytest.mark.regression
@@ -64,7 +64,7 @@ def test_create_incorrect_token(created_token, name):
 
 @allure.description('Check token creation url with another methods')
 @allure.feature('Authorization')
-@allure.story('Wrong authorization')
+@allure.story('5. Wrong authorization')
 @allure.title('non-POST /authorize')
 @pytest.mark.parametrize('method', ['GET', 'PATCH', 'PUT', 'DELETE'])
 @pytest.mark.regression
@@ -75,7 +75,7 @@ def test_wrong_authorization_url(created_token, method):
 
 @allure.description('Check 404 for incorrect curl')
 @allure.feature('Authorization')
-@allure.story('Wrong authorization')
+@allure.story('6. Wrong authorization')
 @allure.title('incorrect curl')
 @pytest.mark.regression
 def test_wrong_authorization_curl(created_token):
@@ -84,8 +84,8 @@ def test_wrong_authorization_curl(created_token):
 
 
 @allure.description('Check token status')
-@allure.feature('Check token')
-@allure.story('Check token')
+@allure.feature('Authorization')
+@allure.story('7. Check token')
 @allure.title('GET /authorize/token')
 @pytest.mark.regression
 @pytest.mark.smoke
@@ -93,3 +93,23 @@ def test_check_token(user_token, checked_token):
     checked_token.check_token_status(user_token)
     assert checked_token.check_status_is_(200)
     assert checked_token.check_correct_text_in_request()
+    assert checked_token.check_user_is_correct(user)
+
+@allure.description('Check incorrect token')
+@allure.feature('Authorization')
+@allure.story('8. Check incorrect token')
+@allure.title('GET /authorize/incorrect token')
+@pytest.mark.regression
+def test_check_incorrect_token(checked_token):
+    checked_token.check_incorrect_token_status()
+    assert checked_token.check_status_is_(404)
+
+@allure.description('Check token with wrong methods')
+@allure.feature('Authorization')
+@allure.story('9. Wrong token check')
+@allure.title('non-GET /authorize/token')
+@pytest.mark.parametrize('method', ['POST', 'PATCH', 'PUT', 'DELETE'])
+@pytest.mark.regression
+def test_wrong_authorization_url(checked_token, user_token, method):
+    checked_token.wrong_method(method, user_token)
+    assert checked_token.check_status_is_(405)
