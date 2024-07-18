@@ -8,6 +8,9 @@ from endpoints.base_api import BaseApi
 class CheckTokenStatus(BaseApi):
     @allure.step('Check Token status')
     def check_token_status(self, user_token, header=None):
+        # print()
+        # print(f'{url.url}/authorize/{user_token}')
+        # print(h.non_auth_header)
         headers = header if header else h.non_auth_header
 
         self.response = requests.get(

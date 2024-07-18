@@ -6,7 +6,7 @@ from endpoints.get_token_status import CheckTokenStatus
 from endpoints.get_memes import MemesFetcher
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def user_token(checked_token, created_token):
     token = t.tokens['active token']
     checked_token.check_token_status(token)
@@ -15,7 +15,6 @@ def user_token(checked_token, created_token):
         created_token.create_token(p.token_payload)
         created_token.update_token_in_file()
         token = created_token.token
-
     return token
 
 @pytest.fixture()
