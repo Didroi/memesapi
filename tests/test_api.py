@@ -112,7 +112,7 @@ def test_incorrect_token(checked_token):
 @allure.title('non-GET /authorize/token')
 @pytest.mark.parametrize('method', ['POST', 'PATCH', 'PUT', 'DELETE'])
 @pytest.mark.regression
-def test_wrong_authorization_url(checked_token, user_token, method):
+def test_wrong_checking_token_url(checked_token, user_token, method):
     checked_token.wrong_method(method, user_token)
     assert checked_token.check_status_is_(405)
 
@@ -130,7 +130,7 @@ def test_obsolete_token(checked_token):
 @allure.story('11. Check token with wrong url')
 @allure.title('GET /wrong url/token')
 @pytest.mark.regression
-def test_token(user_token, checked_token):
+def test_token_with_wrong_url(user_token, checked_token):
     checked_token.check_token_with_wrong_url(user_token)
     assert checked_token.check_status_is_(404)
 
@@ -140,7 +140,7 @@ def test_token(user_token, checked_token):
 @allure.title('GET /meme')
 @pytest.mark.regression
 @pytest.mark.smoke
-def test_token(user_token, fetch_all_memes):
+def test_get_memes(user_token, fetch_all_memes):
     fetch_all_memes.fetch_all_memes()
     assert fetch_all_memes.check_status_is_(200)
     assert fetch_all_memes.check_data_is_not_empty()
@@ -152,7 +152,7 @@ def test_token(user_token, fetch_all_memes):
 @allure.story('13. Wrong get memes')
 @allure.title('GET /meme without token')
 @pytest.mark.regression
-def test_token(fetch_all_memes):
+def test_get_memes_without_token(fetch_all_memes):
     fetch_all_memes.fetch_memes_without_token()
     assert fetch_all_memes.check_status_is_(401)
 
