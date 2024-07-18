@@ -1,27 +1,21 @@
 import pytest
-import requests
 from tests.data import payloads as p
+from tests.data import token as t
 from endpoints.post_authorization import CreateToken
 from endpoints.get_token_status import CheckTokenStatus
-from tests.data import token as t
-from tests.data import headers as h
-from tests.data import url
+from endpoints.get_memes import MemesFetcher
+
 
 @pytest.fixture()
-def user_token():
-    token = t.token
-    headers = h.non_auth_header
-    response = requests.get(
-        f'{url.url}/authorize/{token}',
-        headers=headers
-    )
+def user_token(checked_token, created_token):
+    token = t.tokens['active token']
+    checked_token.check_token_status(token)
 
-    if response.status_code != 200 or 'Token is alive' not in response.text:
-        token_creation = CreateToken()
-        token_creation.create_token(p.token_payload)
-        token = token_creation.response.json()['token']
-        with open('data/token.py', 'w') as f:
-            f.write(f'token = "{token}"')
+    if checked_token.response.status_code != 200 or 'Token is alive' not in checked_token.response.text:
+        created_token.create_token(p.token_payload)
+        created_token.update_token_in_file()
+        token = created_token.token
+
     return token
 
 @pytest.fixture()
@@ -31,3 +25,7 @@ def created_token():
 @pytest.fixture()
 def checked_token():
     return CheckTokenStatus()
+
+@pytest.fixture()
+def fetch_all_memes():
+    return MemesFetcher()

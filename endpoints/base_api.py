@@ -11,7 +11,6 @@ class BaseApi:
     def check_status_is_(self, code):
         return self.response.status_code == code
 
-
     @allure.step('Check whithout Token')
     def try_without_token(self, name):
         pass
