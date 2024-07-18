@@ -1,10 +1,12 @@
 import pytest
 import allure
 from tests.data import payloads as p
+from tests.data import token as t
 
 
 user = p.token_payload['name']
-auth_payload = p.token_payload
+auth_payload = p.token_payload.copy()
+obs_token = t.tokens['obsolete token']
 
 
 @allure.description('Creating new token for user')
@@ -89,7 +91,7 @@ def test_wrong_authorization_curl(created_token):
 @allure.title('GET /authorize/token')
 @pytest.mark.regression
 @pytest.mark.smoke
-def test_check_token(user_token, checked_token):
+def test_token(user_token, checked_token):
     checked_token.check_token_status(user_token)
     assert checked_token.check_status_is_(200)
     assert checked_token.check_correct_text_in_request()
@@ -100,7 +102,7 @@ def test_check_token(user_token, checked_token):
 @allure.story('8. Check incorrect token')
 @allure.title('GET /authorize/incorrect token')
 @pytest.mark.regression
-def test_check_incorrect_token(checked_token):
+def test_incorrect_token(checked_token):
     checked_token.check_incorrect_token_status()
     assert checked_token.check_status_is_(404)
 
@@ -113,3 +115,33 @@ def test_check_incorrect_token(checked_token):
 def test_wrong_authorization_url(checked_token, user_token, method):
     checked_token.wrong_method(method, user_token)
     assert checked_token.check_status_is_(405)
+
+@allure.description('Check obsolete token')
+@allure.feature('Authorization')
+@allure.story('10. Check obsolete token')
+@allure.title('GET /authorize/obsolete token')
+@pytest.mark.regression
+def test_obsolete_token(checked_token):
+    checked_token.check_obsolete_token(obs_token)
+    assert checked_token.check_status_is_(404)
+
+@allure.description('Check token with wrong url')
+@allure.feature('Authorization')
+@allure.story('11. Check token with wrong url')
+@allure.title('GET /wrong url/token')
+@pytest.mark.regression
+def test_token(user_token, checked_token):
+    checked_token.check_token_with_wrong_url(user_token)
+    assert checked_token.check_status_is_(404)
+
+@allure.description('Fetch all memes')
+@allure.feature('Get Memes')
+@allure.story('12. Check token')
+@allure.title('GET /meme')
+@pytest.mark.regression
+@pytest.mark.smoke
+def test_token(user_token, fetch_all_memes):
+    fetch_all_memes.fetch_all_memes()
+    assert fetch_all_memes.check_status_is_(200)
+    # assert checked_token.check_correct_text_in_request()
+    # assert checked_token.check_user_is_correct(user)

@@ -1,8 +1,9 @@
 import pytest
 from tests.data import payloads as p
+from tests.data import token as t
 from endpoints.post_authorization import CreateToken
 from endpoints.get_token_status import CheckTokenStatus
-from tests.data import token as t
+from endpoints.get_memes import MemesFetcher
 
 
 @pytest.fixture()
@@ -25,3 +26,6 @@ def created_token():
 def checked_token():
     return CheckTokenStatus()
 
+@pytest.fixture()
+def fetch_all_memes():
+    return MemesFetcher()

@@ -2,6 +2,7 @@ import requests
 import allure
 from tests.data import headers as h
 from tests.data import url
+from tests.data import token as t
 from endpoints.base_api import BaseApi
 
 
@@ -19,12 +20,12 @@ class CreateToken(BaseApi):
         self.response_json = self.response.json()
         self.token = self.response_json['token']
 
-    @allure.step('Update Token in file')
+    @allure.step('Update Token in files')
     def update_token_in_file(self):
-        file_path = '../tests/data/token.py'
+        file_path = t.path
         with open(file_path, 'r') as f:
             lines = f.readlines()
-        lines[1] = f'    "active token": "{self.token}",\n'
+        lines[5] = f'    "active token": "{self.token}",\n'
         with open(file_path, 'w') as f:
             f.writelines(lines)
 

@@ -2,7 +2,6 @@ import requests
 import allure
 from tests.data import headers as h
 from tests.data import url
-# from tests.data import payloads as p
 from endpoints.base_api import BaseApi
 
 
@@ -34,6 +33,28 @@ class CheckTokenStatus(BaseApi):
                                          f'{url.url}/authorize/{user_token}',
                                          headers=headers
                                          )
+
+    @allure.step('Check obsolete Token')
+    def check_obsolete_token(self, token, header=None):
+        headers = header if header else h.non_auth_header
+
+        self.response = requests.get(
+            f'{url.url}/authorize/{token}',
+            headers=headers
+        )
+
+        self.response_txt = self.response.text
+
+    @allure.step('Check Token with wrong url')
+    def check_token_with_wrong_url(self, user_token, header=None):
+        headers = header if header else h.non_auth_header
+
+        self.response = requests.get(
+            f'{url.url}/avthorizec/{user_token}',
+            headers=headers
+        )
+
+        self.response_txt = self.response.text
 
     @allure.step('Check correct answer')
     def check_correct_text_in_request(self):
