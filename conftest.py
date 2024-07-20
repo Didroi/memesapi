@@ -3,6 +3,7 @@ from tests.data import payloads as p
 from endpoints.post_authorization import CreateToken
 from endpoints.get_token_status import CheckTokenStatus
 from endpoints.get_memes import MemesFetcher
+from endpoints.get_meme_by_id import SingleMemeFetcher
 
 
 @pytest.fixture()  # autouse=True
@@ -26,3 +27,7 @@ def checked_token():
 @pytest.fixture()
 def fetch_all_memes():
     return MemesFetcher()
+
+@pytest.fixture()
+def fetch_meme():
+    return SingleMemeFetcher()

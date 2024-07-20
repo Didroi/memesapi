@@ -125,8 +125,6 @@ def test_wrong_checking_token_url(checked_token, user_token, method):
 @allure.title('GET /authorize/obsolete token')
 @pytest.mark.regression
 def test_obsolete_token(checked_token):
-    # # token = checked_token.obsolete_token
-    # print(token)
     checked_token.check_obsolete_token(obs_token)
     assert checked_token.check_status_is_(404)
 
@@ -170,7 +168,7 @@ def test_get_memes_without_token(fetch_all_memes):
 @allure.feature('Get Memes')
 @allure.story('14. Wrong get memes with incorrect tokens')
 @allure.title('GET /meme with incorrect token')
-@pytest.mark.parametrize('token', ['token', obs_token, "tok', 'key': 'value'"])
+@pytest.mark.parametrize('token', ['token', obs_token, "tok', 'key': 'value'"])  # добавить ' ' (пробел)
 @pytest.mark.regression
 def test_get_memes_with_incorrect_token(fetch_all_memes, token):
     fetch_all_memes.fetch_memes_with_incorrect_token(token)
@@ -188,4 +186,16 @@ def test_get_memes_with_incorrect_token(fetch_all_memes, token):
 def test_wrong_methods_for_getting_memes(fetch_all_memes, user_token, method):
     fetch_all_memes.wrong_method(method, user_token)
     assert fetch_all_memes.check_status_is_(405)
-    # need to add paydentic for check response structure
+
+
+@allure.description('Check single meme by ID')
+@allure.feature('Get Memes')
+@allure.story('16. Wrong methods for getting memes')
+@allure.title('GET /meme/id')
+@pytest.mark.smoke
+@pytest.mark.regression
+def test_get_meme_by_id(fetch_meme, user_token):
+    header = fetch_meme.auth_header(user_token)
+    id = 1  # сделать фикстуру
+    fetch_meme.fetch_meme_by_id(header, id)
+    assert fetch_meme.check_status_is_(200)
