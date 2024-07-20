@@ -1,20 +1,18 @@
 import requests
 import allure
-from tests.data import headers as h
+import os
+# from tests.data import headers as h
 from tests.data import url
-from tests.data import token as t
 from endpoints.base_api import BaseApi
 
 
 class CreateToken(BaseApi):
     @allure.step('Create Token')
-    def create_token(self, payload, header=None):
-        headers = header if header else h.non_auth_header
-
+    def create_token(self, payload):
         self.response = requests.post(
             f'{url.url}/authorize',
             json=payload,
-            headers=headers
+            headers=self.non_auth_header
         )
 
         self.response_json = self.response.json()
@@ -22,41 +20,36 @@ class CreateToken(BaseApi):
 
     @allure.step('Update Token in files')
     def update_token_in_file(self):
-        file_path = t.path
-        with open(file_path, 'r') as f:
-            lines = f.readlines()
-        lines[5] = f'    "active token": "{self.token}",\n'
-        with open(file_path, 'w') as f:
-            f.writelines(lines)
+        file_path = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)
+                            ), 'tests', 'data', 'token.txt'
+        )
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(self.token)
 
     @allure.step('Create Token')
-    def false_create_token(self, payload, header=None):
-        headers = header if header else h.non_auth_header
-
+    def false_create_token(self, payload):
         self.response = requests.post(
             f'{url.url}/authorize',
             json=payload,
-            headers=headers
+            headers=self.non_auth_header
         )
 
     @allure.step('Wrong method')
-    def wrong_method(self, payload, method, header=None):
-        headers = header if header else h.non_auth_header
+    def wrong_method(self, payload, method):
 
         self.response = requests.request(str(method),
                                          f'{url.url}/authorize',
                                          json=payload,
-                                         headers=headers
+                                         headers=self.non_auth_header
                                          )
 
     @allure.step('Wrong URL')
-    def wrong_url(self, payload, header=None):
-        headers = header if header else h.non_auth_header
-
+    def wrong_url(self, payload):
         self.response = requests.post(
             f'{url.url}/404authorize',
             json=payload,
-            headers=headers
+            headers=self.non_auth_header
         )
 
     @allure.step('Check response Name')
