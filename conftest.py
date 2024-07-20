@@ -1,16 +1,14 @@
 import pytest
 from tests.data import payloads as p
-from tests.data import token as t
 from endpoints.post_authorization import CreateToken
 from endpoints.get_token_status import CheckTokenStatus
 from endpoints.get_memes import MemesFetcher
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture()  # autouse=True
 def user_token(checked_token, created_token):
-    token = t.tokens['active token']
+    token = checked_token.active_token()
     checked_token.check_token_status(token)
-
     if checked_token.response.status_code != 200 or 'Token is alive' not in checked_token.response.text:
         created_token.create_token(p.token_payload)
         created_token.update_token_in_file()
