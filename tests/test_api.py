@@ -190,7 +190,7 @@ def test_wrong_methods_for_getting_memes(fetch_all_memes, user_token, method):
 
 @allure.description('Check single meme by ID')
 @allure.feature('Get Memes')
-@allure.story('16. Wrong methods for getting memes')
+@allure.story('16. Get mem by ID')
 @allure.title('GET /meme/id')
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -199,3 +199,16 @@ def test_get_meme_by_id(fetch_meme, user_token):
     id = 1  # сделать фикстуру
     fetch_meme.fetch_meme_by_id(header, id)
     assert fetch_meme.check_status_is_(200)
+    assert fetch_meme.check_correct_id_in_response(id)
+
+
+@allure.description('Check single meme by incorrect ID')
+@allure.feature('Get Memes')
+@allure.story('17. Get mem by incorrect ID')
+@allure.title('GET /meme/incorrect id')
+@pytest.mark.parametrize('id', [2, 0, '', ' ', -1, '01', 'a', '*', 1.5])
+@pytest.mark.regression
+def test_get_meme_by_incorrect_id(fetch_meme, user_token, id):
+    header = fetch_meme.auth_header(user_token)
+    fetch_meme.fetch_meme_by_id_without_json(header, id)
+    assert fetch_meme.check_status_is_(404)
