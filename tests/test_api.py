@@ -205,7 +205,7 @@ def test_get_meme_by_id(fetch_meme, user_token, meme_id):
 
 @allure.description('Check single meme by incorrect ID')
 @allure.feature('Get Memes')
-@allure.story('17. Get mem by incorrect ID')
+@allure.story('17. Get meme by incorrect ID')
 @allure.title('GET /meme/incorrect id')
 @pytest.mark.parametrize('id', [2, 0, '', ' ', -1, '01', 'a', '*', 1.5])
 @pytest.mark.regression
@@ -214,9 +214,51 @@ def test_get_meme_by_incorrect_id(fetch_meme, user_token, id):
     fetch_meme.fetch_meme_by_id_without_json(header, id)
     assert fetch_meme.check_status_is_(404)
 
+@allure.description('Check single meme without token')
+@allure.feature('Get Memes')
+@allure.story('18. Get meme without token')
+@allure.title('GET /meme/id')
+@pytest.mark.regression
+def test_get_meme_without_token(fetch_meme, meme_id):
+    header = fetch_meme.non_auth_header
+    fetch_meme.fetch_meme_by_id_without_json(header, meme_id)
+    assert fetch_meme.check_status_is_(401)
+
+@allure.description('Check single meme by ID with incorrect token')
+@allure.feature('Get Memes')
+@allure.story('19. Get meme by ID with incorrect token')
+@allure.title('GET /meme/id')
+@pytest.mark.parametrize('token', ['1', 'token', obs_token])  # , '', ' ' добавить пустую строку и пробед (они пятисотят почему-то
+@pytest.mark.regression
+def test_get_meme_with_incorrect_token(fetch_meme, token, meme_id):
+    header = fetch_meme.auth_header(token)
+    fetch_meme.fetch_meme_by_id_without_json(header, meme_id)
+    assert fetch_meme.check_status_is_(401)
+
+@allure.description('Check single meme with incorrect method')
+@allure.feature('Get Memes')
+@allure.story('20. Wrong methods for getting single meme by ID')
+@allure.title('non-GET /meme/id')
+@pytest.mark.parametrize('method', ['POST', 'PATCH'])
+@pytest.mark.regression
+def test_get_meme_with_incorrect_method(fetch_meme, user_token, meme_id, method):
+    header = fetch_meme.auth_header(user_token)
+    fetch_meme.fetch_meme_with_incorrect_method(header, meme_id, method)
+    assert fetch_meme.check_status_is_(405)
+
+@allure.description('Creating new meme')
+@allure.feature('Create Memes')
+@allure.story('22. Meme creation')
+@allure.title('POST /meme')
+@pytest.mark.smoke
+@pytest.mark.regression
 def test_creation_meme(creating_meme, user_token):
     header = creating_meme.auth_header(user_token)
     creating_meme.create_meme(header, meme_creation_payload)
+    assert creating_meme.check_status_is_(200)
+    assert creating_meme.check_id_in_response()
+    creating_meme.delete_meme_after_creating()
+    # need to add paydentic for check response structure
 
 def test_deletion_meme(deleting_meme, user_token, meme_id):
     header = deleting_meme.auth_header(user_token)
