@@ -1,7 +1,6 @@
 import requests
 import allure
 import os
-# from tests.data import headers as h
 from tests.data import url
 from endpoints.base_api import BaseApi
 

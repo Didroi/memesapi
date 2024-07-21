@@ -6,6 +6,7 @@ from endpoints.base_api import BaseApi
 
 user = p.token_payload['name']
 auth_payload = p.token_payload.copy()
+meme_creation_payload = p.meme_payload.copy()
 obs_token = BaseApi.obsolete_token
 
 
@@ -194,12 +195,12 @@ def test_wrong_methods_for_getting_memes(fetch_all_memes, user_token, method):
 @allure.title('GET /meme/id')
 @pytest.mark.smoke
 @pytest.mark.regression
-def test_get_meme_by_id(fetch_meme, user_token):
+def test_get_meme_by_id(fetch_meme, user_token, meme_id):
     header = fetch_meme.auth_header(user_token)
-    id = 1  # сделать фикстуру
-    fetch_meme.fetch_meme_by_id(header, id)
+    fetch_meme.fetch_meme_by_id(header, meme_id)
     assert fetch_meme.check_status_is_(200)
-    assert fetch_meme.check_correct_id_in_response(id)
+    assert fetch_meme.check_correct_id_in_response(meme_id)
+    # need to add paydentic for check response structure
 
 
 @allure.description('Check single meme by incorrect ID')
@@ -212,3 +213,11 @@ def test_get_meme_by_incorrect_id(fetch_meme, user_token, id):
     header = fetch_meme.auth_header(user_token)
     fetch_meme.fetch_meme_by_id_without_json(header, id)
     assert fetch_meme.check_status_is_(404)
+
+def test_creation_meme(creating_meme, user_token):
+    header = creating_meme.auth_header(user_token)
+    creating_meme.create_meme(header, meme_creation_payload)
+
+def test_deletion_meme(deleting_meme, user_token, meme_id):
+    header = deleting_meme.auth_header(user_token)
+    deleting_meme.delete_meme(header, meme_id)
