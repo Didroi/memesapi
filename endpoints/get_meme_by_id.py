@@ -25,3 +25,20 @@ class SingleMemeFetcher(BaseApi):
             f'{url.url}/meme/{id}',
             headers=header
         )
+
+    @allure.step('Check single meme with incorrect method')
+    def fetch_meme_with_incorrect_method(self, header, id, method):
+
+        self.response = requests.request(
+            method,
+            f'{url.url}/meme/{id}',
+            headers=header
+        )
+
+        # print()
+        # print(method)
+        # print(f'{url.url}/meme/{id}')
+        # print(header)
+        # print(self.response.status_code)
+        # print(self.response.text)
+
