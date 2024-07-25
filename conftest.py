@@ -19,6 +19,12 @@ def user_token(checked_token, created_token):
     return token
 
 @pytest.fixture()  # autouse=True
+def another_user_token(created_token):
+    created_token.create_token(p.another_token_payload)
+    token = created_token.token
+    return token
+
+@pytest.fixture()  # autouse=True
 def meme_id(creating_meme, deleting_meme, user_token):
     header = creating_meme.auth_header(user_token)
     meme_id = creating_meme.create_meme(header, p.meme_payload.copy())

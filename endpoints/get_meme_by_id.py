@@ -14,6 +14,7 @@ class SingleMemeFetcher(BaseApi):
         )
 
         self.response_json = self.response.json()
+        return self.response_json
 
     def check_correct_id_in_response(self, id):
         return self.response_json['id'] == id

@@ -37,6 +37,11 @@ class CreateToken(BaseApi):
     @allure.step('Wrong method')
     def wrong_method(self, payload, method):
 
+        print(method)
+        print(f'{url.url}/authorize')
+        print(payload)
+        print(self.non_auth_header)
+
         self.response = requests.request(str(method),
                                          f'{url.url}/authorize',
                                          json=payload,

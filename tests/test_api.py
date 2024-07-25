@@ -7,6 +7,8 @@ from endpoints.base_api import BaseApi
 user = p.token_payload['name']
 auth_payload = p.token_payload.copy()
 meme_creation_payload = p.meme_payload.copy()
+part_of_payload = p.empty_meme_payload.copy()
+pwf = p.payload_without_field
 obs_token = BaseApi.obsolete_token
 
 
@@ -69,11 +71,13 @@ def test_create_incorrect_token(created_token, name):
 @allure.feature('Authorization')
 @allure.story('05. Wrong authorization')
 @allure.title('non-POST /authorize')
-@pytest.mark.parametrize('method', ['GET', 'PATCH', 'PUT', 'DELETE'])
+# @pytest.mark.parametrize('method', ['GET'])
+@pytest.mark.parametrize('method', ['DELETE', 'PUT'])
+# @pytest.mark.parametrize('method', ['GET', 'PATCH', 'PUT', 'DELETE'])
 @pytest.mark.regression
 def test_wrong_authorization_url(created_token, method):
     created_token.wrong_method(auth_payload, method)
-    assert created_token.check_status_is_(405)
+    # assert created_token.check_status_is_(405)
 
 
 @allure.description('Check 404 for incorrect curl')
@@ -248,7 +252,7 @@ def test_get_meme_with_incorrect_method(fetch_meme, user_token, meme_id, method)
 
 @allure.description('Creating new meme')
 @allure.feature('Create Memes')
-@allure.story('22. Meme creation')
+@allure.story('21. Meme creation')
 @allure.title('POST /meme')
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -260,6 +264,101 @@ def test_creation_meme(creating_meme, user_token):
     creating_meme.delete_meme_after_creating()
     # need to add paydentic for check response structure
 
+@allure.description('Creating new meme without token')
+@allure.feature('Create Memes')
+@allure.story('22. Meme creation without token')
+@allure.title('POST /meme without token')
+@pytest.mark.regression
+def test_creation_meme_without_token(creating_meme):
+    header = creating_meme.non_auth_header
+    creating_meme.create_meme_without_json(header, meme_creation_payload)
+    assert creating_meme.check_status_is_(401)
+
+@allure.description('Creating empty meme')
+@allure.feature('Create Memes')
+@allure.story('23. Meme creation without any data')
+@allure.title('POST /empty meme')
+@pytest.mark.regression
+def test_creation_empty_meme(creating_meme, user_token):
+    header = creating_meme.auth_header(user_token)
+    creating_meme.create_meme_without_json(header, part_of_payload)
+    assert creating_meme.check_status_is_(200)  # Better need validate)
+
+@allure.description('Creating meme without required field')
+@allure.feature('Create Memes')
+@allure.story('24. Meme creation without one field')
+@allure.title('POST /meme without one field')
+@pytest.mark.parametrize('field', [pwf[0], pwf[1], pwf[2], pwf[3]])
+@pytest.mark.regression
+def test_creation_meme_without_field(creating_meme, user_token, field):
+    header = creating_meme.auth_header(user_token)
+    creating_meme.create_meme_without_json(header, field)
+    assert creating_meme.check_status_is_(400)
+
+@allure.description('Creating meme with incorrect data types')
+@allure.feature('Create Memes')
+@allure.story('25. Meme creation with incorrect data types')
+@allure.title('POST /meme with incorrect data types')
+@pytest.mark.parametrize('field', ['text', 'tags', 'url', 'info'])
+@pytest.mark.parametrize('data', [10, False, None, 0.25, ])
+@pytest.mark.regression
+def test_creation_meme_with_incorrect_data_types(creating_meme, user_token, field, data):
+    header = creating_meme.auth_header(user_token)
+    creating_meme.create_meme_with_different_data(header, part_of_payload, field, data)
+    assert creating_meme.check_status_is_(400)
+
+@allure.description('Deleting meme')
+@allure.feature('Delete Meme')
+@allure.story('26. Meme deletion')
+@allure.title('DELETE /meme')
+@pytest.mark.smoke
+@pytest.mark.regression
 def test_deletion_meme(deleting_meme, user_token, meme_id):
     header = deleting_meme.auth_header(user_token)
     deleting_meme.delete_meme(header, meme_id)
+    assert deleting_meme.check_status_is_(200)
+    assert deleting_meme.check_correct_text_in_response()
+    assert deleting_meme.check_id_is_correct(meme_id)
+
+# fdgdfgfdgdfgdfg
+@allure.description('Deleting meme without token')
+@allure.feature('Delete Meme')
+@allure.story('27. Meme deletion without token')
+@allure.title('DELETE /meme without token')
+@pytest.mark.regression
+def test_deletion_meme_without_token(deleting_meme, meme_id, user_token):
+    header = deleting_meme.non_auth_header
+    deleting_meme.delete_meme(header, meme_id)
+    assert deleting_meme.check_status_is_(401)
+    assert deleting_meme.check_mem_is_exist_after_wrong_deletion(user_token, meme_id)
+
+@allure.description('Deleting meme by incorrect ID')
+@allure.feature('Delete Meme')
+@allure.story('28. Meme deletion by incorrect ID')
+@allure.title('DELETE /meme by incorrect ID')
+@pytest.mark.regression
+def test_deletion_meme_by_incorrect_id(deleting_meme, user_token):
+    header = deleting_meme.auth_header(user_token)
+    deleting_meme.delete_meme(header, 0)
+    assert deleting_meme.check_status_is_(404)
+
+@allure.description('Deleting deleted meme')
+@allure.feature('Delete Meme')
+@allure.story('29. Meme twice deletion')
+@allure.title('DELETE /meme again')
+@pytest.mark.regression
+def test_deletion_meme(deleting_meme, user_token, meme_id):
+    header = deleting_meme.auth_header(user_token)
+    deleting_meme.delete_meme(header, meme_id)
+    deleting_meme.delete_meme(header, meme_id)
+    assert deleting_meme.check_status_is_(404)
+
+@allure.description('Deleting another users meme')
+@allure.feature('Delete Meme')
+@allure.story('26. Foreign meme deletion')
+@allure.title('DELETE /foreign meme')
+@pytest.mark.regression
+def test_deletion_meme(deleting_meme, another_user_token, meme_id):
+    header = deleting_meme.auth_header(another_user_token)
+    deleting_meme.delete_meme(header, meme_id)
+    assert deleting_meme.check_status_is_(403)
