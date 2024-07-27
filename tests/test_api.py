@@ -215,9 +215,9 @@ def test_get_meme_by_id(fetch_meme, user_token, meme_id):
 @allure.title('GET /meme/incorrect id')
 @pytest.mark.parametrize('id', [2, 0, '', ' ', -1, '01', 'a', '*', 1.5])
 @pytest.mark.regression
-def test_get_meme_by_incorrect_id(fetch_meme, user_token, id):
+def test_get_meme_by_incorrect_id(fetch_meme, user_token, test_id):
     header = fetch_meme.auth_header(user_token)
-    fetch_meme.fetch_meme_by_id_without_json(header, id)
+    fetch_meme.fetch_meme_by_id_without_json(header, test_id)
     assert fetch_meme.check_status_is_(404)
 
 @allure.description('Check single meme without token')
@@ -434,7 +434,7 @@ def test_changing_meme_with_nonexistent_id(change_meme, user_token, meme_id):
 
 @allure.description('Changing another users meme')
 @allure.feature('e. Change Meme')
-@allure.story('37. Foreign meme changing')
+@allure.story('37Ж::. Foreign meme changing')
 @allure.title('PUT /foreign meme')
 @pytest.mark.regression
 def test_changing_foreign_meme(change_meme, another_user_token, meme_id):
