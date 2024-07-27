@@ -40,7 +40,6 @@ class MemeCreator(BaseApi):
         )
 
     def check_id_in_response(self):
-        print(self.response_json['id'])
         return self.response_json['id'] > 0
 
     def delete_meme_after_creating(self):
