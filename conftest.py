@@ -6,6 +6,7 @@ from endpoints.get_memes import MemesFetcher
 from endpoints.get_meme_by_id import SingleMemeFetcher
 from endpoints.create_new_meme import MemeCreator
 from endpoints.delete_meme_by_id import MemeAnnihilator
+from endpoints.change_meme import MemeChanger
 
 
 @pytest.fixture()  # autouse=True
@@ -55,3 +56,7 @@ def creating_meme():
 @pytest.fixture()
 def deleting_meme():
     return MemeAnnihilator()
+
+@pytest.fixture()
+def change_meme():
+    return MemeChanger()
