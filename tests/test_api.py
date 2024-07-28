@@ -213,12 +213,13 @@ def test_get_meme_by_id(fetch_meme, user_token, meme_id):
 @allure.feature('b. Get Memes')
 @allure.story('17. Get meme by incorrect ID')
 @allure.title('GET /meme/incorrect id')
-@pytest.mark.parametrize('id', [2, 0, '', ' ', -1, '01', 'a', '*', 1.5])
+@pytest.mark.parametrize('param_id', [2, 0, '', ' ', -1, '01', 'a', '*', 1.5])
 @pytest.mark.regression
-def test_get_meme_by_incorrect_id(fetch_meme, user_token, id):
+def test_get_meme_by_incorrect_id(fetch_meme, user_token, param_id):
     header = fetch_meme.auth_header(user_token)
-    fetch_meme.fetch_meme_by_id_without_json(header, id)
+    fetch_meme.fetch_meme_by_id_without_json(header, param_id)
     assert fetch_meme.check_status_is_(404)
+
 
 @allure.description('Check single meme without token')
 @allure.feature('b. Get Memes')
@@ -230,16 +231,18 @@ def test_get_meme_without_token(fetch_meme, meme_id):
     fetch_meme.fetch_meme_by_id_without_json(header, meme_id)
     assert fetch_meme.check_status_is_(401)
 
+
 @allure.description('Check single meme by ID with incorrect token')
 @allure.feature('b. Get Memes')
 @allure.story('19. Get meme by ID with incorrect token')
 @allure.title('GET /meme/id')
-@pytest.mark.parametrize('token', ['1', 'token', obs_token])  # , '', ' ' добавить пустую строку и пробед (они пятисотят почему-то
+@pytest.mark.parametrize('token', ['1', 'token', obs_token, '', ' '])
 @pytest.mark.regression
 def test_get_meme_with_incorrect_token(fetch_meme, token, meme_id):
     header = fetch_meme.auth_header(token)
     fetch_meme.fetch_meme_by_id_without_json(header, meme_id)
     assert fetch_meme.check_status_is_(401)
+
 
 @allure.description('Check single meme with incorrect method')
 @allure.feature('b. Get Memes')
@@ -251,6 +254,7 @@ def test_get_meme_with_incorrect_method(fetch_meme, user_token, meme_id, method)
     header = fetch_meme.auth_header(user_token)
     fetch_meme.fetch_meme_with_incorrect_method(header, meme_id, method)
     assert fetch_meme.check_status_is_(405)
+
 
 @allure.description('Creating new meme')
 @allure.feature('c. Create Memes')
@@ -266,6 +270,7 @@ def test_creation_meme(creating_meme, user_token):
     creating_meme.delete_meme_after_creating()
     # need to add paydentic for check response structure
 
+
 @allure.description('Creating new meme without token')
 @allure.feature('c. Create Memes')
 @allure.story('22. Meme creation without token')
@@ -276,6 +281,7 @@ def test_creation_meme_without_token(creating_meme):
     creating_meme.create_meme_without_json(header, meme_creation_payload)
     assert creating_meme.check_status_is_(401)
 
+
 @allure.description('Creating empty meme')
 @allure.feature('c. Create Memes')
 @allure.story('23. Meme creation without any data')
@@ -285,6 +291,7 @@ def test_creation_empty_meme(creating_meme, user_token):
     header = creating_meme.auth_header(user_token)
     creating_meme.create_meme_without_json(header, part_of_payload)
     assert creating_meme.check_status_is_(200)  # Я бы завел баг или порекомендовал доработку на валидацию
+
 
 @allure.description('Creating meme without required field')
 @allure.feature('c. Create Memes')
@@ -297,6 +304,7 @@ def test_creation_meme_without_field(creating_meme, user_token, field):
     creating_meme.create_meme_without_json(header, field)
     assert creating_meme.check_status_is_(400)
 
+
 @allure.description('Creating meme with incorrect data types')
 @allure.feature('c. Create Memes')
 @allure.story('25. Meme creation with incorrect data types')
@@ -308,6 +316,7 @@ def test_creation_meme_with_incorrect_data_types(creating_meme, user_token, fiel
     header = creating_meme.auth_header(user_token)
     creating_meme.create_meme_with_different_data(header, part_of_payload, field, data)
     assert creating_meme.check_status_is_(400)
+
 
 @allure.description('Deleting meme')
 @allure.feature('d. Delete Meme')
@@ -322,6 +331,7 @@ def test_deletion_meme(deleting_meme, user_token, meme_id):
     assert deleting_meme.check_correct_text_in_response()
     assert deleting_meme.check_id_is_correct(meme_id)
 
+
 @allure.description('Deleting meme without token')
 @allure.feature('d. Delete Meme')
 @allure.story('27. Meme deletion without token')
@@ -333,6 +343,7 @@ def test_deletion_meme_without_token(deleting_meme, meme_id, user_token):
     assert deleting_meme.check_status_is_(401)
     assert deleting_meme.check_mem_is_exist_after_wrong_deletion(user_token, meme_id)
 
+
 @allure.description('Deleting meme by incorrect ID')
 @allure.feature('d. Delete Meme')
 @allure.story('28. Meme deletion by incorrect ID')
@@ -342,6 +353,7 @@ def test_deletion_meme_by_incorrect_id(deleting_meme, user_token):
     header = deleting_meme.auth_header(user_token)
     deleting_meme.delete_meme(header, 0)
     assert deleting_meme.check_status_is_(404)
+
 
 @allure.description('Deleting deleted meme')
 @allure.feature('d. Delete Meme')
@@ -354,6 +366,7 @@ def test_deletion_meme_twice(deleting_meme, user_token, meme_id):
     deleting_meme.delete_meme(header, meme_id)
     assert deleting_meme.check_status_is_(404)
 
+
 @allure.description('Deleting another users meme')
 @allure.feature('d. Delete Meme')
 @allure.story('30. Foreign meme deletion')
@@ -363,6 +376,7 @@ def test_deletion_foreign_meme(deleting_meme, another_user_token, meme_id):
     header = deleting_meme.auth_header(another_user_token)
     deleting_meme.delete_meme(header, meme_id)
     assert deleting_meme.check_status_is_(403)
+
 
 @allure.description('Changing meme')
 @allure.feature('e. Change Meme')
@@ -375,7 +389,8 @@ def test_changing_meme(change_meme, user_token, meme_id):
     change_meme.change_meme(header, new_meme_payload, meme_id)
     assert change_meme.check_status_is_(200)
     assert change_meme.check_response_is_correct(new_meme_payload, meme_id)
-    assert change_meme.sure_correct_changes_is_in_db(header, user_token, meme_id)
+    assert change_meme.sure_correct_changes_is_in_db(header, meme_id)
+
 
 @allure.description('Changing meme whithout token')
 @allure.feature('e. Change Meme')
@@ -386,6 +401,7 @@ def test_changing_meme_without_token(change_meme, meme_id):
     header = change_meme.non_auth_header
     change_meme.change_meme_without_json(header, new_meme_payload, meme_id)
     assert change_meme.check_status_is_(401)
+
 
 @allure.description('Changing meme without required field')
 @allure.feature('e. Change Meme')
@@ -411,6 +427,7 @@ def test_changing_meme_with_incorrect_data_types(change_meme, user_token, meme_i
     change_meme.update_meme_with_different_data(header, new_meme_payload, meme_id, field, data)
     assert change_meme.check_status_is_(400)
 
+
 @allure.description('Changing meme with different ID')
 @allure.feature('e. Change Meme')
 @allure.story('35. Changing meme with different ID')
@@ -421,16 +438,18 @@ def test_changing_meme_with_different_id(change_meme, user_token, meme_id):
     change_meme.change_meme_with_different_id(header, new_meme_payload, meme_id)
     assert change_meme.check_status_is_(400)
 
+
 @allure.description('Changing meme with nonexistent ID')
 @allure.feature('e. Change Meme')
 @allure.story('36. Changing meme with nonexistent ID')
 @allure.title('PUT /meme/id with nonexistent ID')
 @pytest.mark.regression
 def test_changing_meme_with_nonexistent_id(change_meme, user_token, meme_id):
-    id = meme_id + 100000
+    test_id = meme_id + 100000
     header = change_meme.auth_header(user_token)
-    change_meme.change_meme_without_json(header, new_meme_payload, id)
+    change_meme.change_meme_without_json(header, new_meme_payload, test_id)
     assert change_meme.check_status_is_(404)
+
 
 @allure.description('Changing another users meme')
 @allure.feature('e. Change Meme')
