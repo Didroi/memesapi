@@ -1,0 +1,20 @@
+name: run tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_target:
+        type: choice
+        description: select tests type
+        required: true
+        default: smoke
+        options:
+          - smoke
+          - regression
+          - all
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    name: tests
+    steps:
